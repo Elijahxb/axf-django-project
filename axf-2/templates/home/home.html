@@ -1,0 +1,215 @@
+{% extends 'base_main.html' %}
+{% load static %}
+{% block extCSS %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'app/home/home.css' %}">
+{% endblock %}
+
+{% block EXTJS %}
+    <script type="text/javascript" src="{% static 'app/home/js/home.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+
+    <div id="home">
+        {#   顶部轮播       #}
+        <div class="swiper-container" id="topSwiper">
+            <div class="swiper-wrapper">
+                <!--处理轮播banner图-->
+                {% for mainwheel in manwheels %}
+                    <div class="swiper-slide">
+                        <a href="#">
+                            <img src="{{mainwheel.img}}" alt="{{ manwheels.name }}">
+                        </a>
+                    </div>
+                  {% endfor %}
+                <!-- 处理结束 -->
+            </div>
+            <!-- 如果需要分页器 -->
+            <div class="swiper-pagination"></div>
+
+        </div>
+        {#         导航         #}
+
+        <div class="topMenu">
+            <nav>
+                <ul>
+                    <!-- 处理导航数据 -->
+                    {% for mainnav in mainnavs %}
+                        <li>
+                            <img src="{{ mainnav.img}}" alt="{{ mainnavs.name }}">
+                            <span></span>
+                        </li>
+                      {% endfor %}
+                    <!--处理结束-->
+
+                </ul>
+            </nav>
+        </div>
+
+        {#         必购     #}
+        <div id="swiperMenu" class="swiper-container">
+
+            <ul class="swiper-wrapper">
+                <!-- 处理必购商品信息 -->
+                   {% for mustbuy in mustbuys %}
+                    <li class="swiper-slide">
+                        <img src="{{ mustbuy.img}}" alt="{{ mustbuys.name }}">
+                    </li>
+                  {% endfor %}
+                <!-- 处理结束 -->
+
+            </ul>
+
+        </div>
+
+        {#          商店    #}
+        <div class="CVS">
+            <!--处理第一个店铺的数据的图片-->
+       {% for mainshop in mainshops %}
+            {% ifequal forloop.counter 1 %}
+            <h2>
+                <img src="{{ mainshop.img}}" alt="">
+            </h2>
+        {% endifequal %}
+        {% endfor %}
+            <!--处理结束-->
+
+            <fieldset>
+                <!--处理第二个到第四个数据-->
+                {% for mainshop in mainshops %}
+                    {% if mainshop.id >= 2 and mainshop.id < 4 %}
+                    <a href="#">
+                        <img src="{{ mainshop.img }}" alt="">
+                    </a>
+                    {% endif %}
+                {% endfor %}
+                <!--处理结束-->
+            </fieldset>
+
+            <ul>
+                <!--处理第五个到第八个数据-->
+                {% for mainshop in mainshops %}
+                {% if mainshop.id >= 4 and mainshop.id < 8 %}
+                    <li>
+                        <a href="#">
+                            <img src="{{ mainshop.img }}" alt="">
+                            <span></span>
+                        </a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+                <!--处理结束-->
+
+            </ul>
+
+            <ol>
+                <!--处理第八个到第十二个数据-->
+           {% for mainshop in mainshops %}
+                {% if mainshop.id >= 8 and mainshop.id <= 12 %}
+                    <li>
+                        <a href="#">
+                            <img src="{{ mainshop.img }}" alt="">
+                        </a>
+                    </li>
+           {% endif %}
+            {% endfor %}
+                <!--处理结束-->
+
+            </ol>
+
+        </div>
+
+        {#         主要显示 #}
+
+        <div class="mainInfo">
+            <!--商品展示-->
+                <section>
+                    <h3><span></span><a href="#">更多&gt;</a></h3>
+
+                    <div>
+                        {% for mainshow in mainshows %}
+                            {% if mainshow.id == 1 %}
+                        <a href="#">
+                            <img src="{{ mainshow.img }}" alt="">
+                        </a>
+                             {% endif %}
+                        {% endfor %}
+
+                    </div>
+
+                    <ul>
+
+                        <li>
+                            {% for mainshow in mainshows %}
+                                {% if mainshow.id == 2 %}
+                            <a href="#">
+                                <img src="{{ mainshow.img1 }}" alt="">
+                                <p class="description">
+                            {% endif %}
+                        {% endfor %}
+                                </p>
+                                <span>￥25.8</span>
+                                <s>￥25.8</s>
+                            </a>
+                            <button>
+                                <span>+</span>
+                            </button>
+
+                        </li>
+                       <li>
+                           {% for mainshow in mainshows %}
+                                {% if mainshow.id == 3 %}
+                            <a href="#">
+                                <img src="{{ mainshow.img2 }}" alt="">
+                                <p class="description">
+
+                                </p>
+                                <span>￥15.3</span>
+                                <s>￥15.8</s>
+                            </a>
+                            <button>
+                                <span>+</span>
+                            </button>
+                        </li>
+                     {% endif %}
+                        {% endfor %}
+                       <li>
+                           {% for mainshow in mainshows %}
+                                {% if mainshow.id == 4 %}
+                            <a href="#">
+                                <img src="{{ mainshow.img3 }}" alt="">
+                                <p class="description">
+                            {% endif %}
+                        {% endfor %}
+                                </p>
+                                <span>￥9.9</span>
+                                <s>￥13.8</s>
+                            </a>
+                            <button>
+                                <span>+</span>
+                            </button>
+                        </li>
+
+                    </ul>
+
+{# 第二个#}
+                 <div>
+                        {% for mainshow in mainshows %}
+                            {% if mainshow.id == 2 %}
+                        <a href="#">
+                            <img src="{{ mainshow.img }}" alt="">
+                        </a>
+                             {% endif %}
+                        {% endfor %}
+
+                    </div>
+
+                </section>
+            <!--商品展示结束-->
+
+
+        </div>
+    </div>
+
+{% endblock %}
