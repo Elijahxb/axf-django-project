@@ -38,3 +38,30 @@ function subShop(goods_id) {
 
     })
 }
+
+
+function cartchangeselect(cart_id) {
+
+    csrf = $('input[name="csrfmiddlewaretoken"]').val()
+    $.ajax({
+        url: '/axf/changecartselect/',
+        type: 'POST',
+        data: {'cart_id': cart_id},
+        dataType: 'json',
+        headers: {'X-CSRFToken':csrf},
+        success:function(msg) {
+            if(msg.is_select){
+                  s = '<span onclick="cartchangeselect('+ cart_id + ')">√</span>'
+            }
+            else{
+               s = '<span onclick="cartchangeselect('+ cart_id + ')">x</span>'
+            }
+
+            $('#changeselect_' + cart_id).html(s)
+
+        },
+        error: function (msg) {
+            alert('请求失败')
+        }
+    })
+}

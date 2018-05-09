@@ -258,3 +258,37 @@ def sub_goods(request):
                     data['c_num'] = user_carts.c_num
 
         return JsonResponse(data)
+
+
+def cart(request):
+    if request.method == 'GET':
+        user = request.user
+        if user and user.id:
+            # 如果用户已经登录，则加载购物车的数据
+            carts = CartModel.objects.filter(user=user)
+
+            return render(request, 'cart/cart.html', {'carts': carts})
+
+        else:
+            return HttpResponseRedirect(reverse('axf:login'))
+
+
+def user_change_select(request):
+    if request.method == 'POST':
+        cart_id = request.POST.get('cart_id')
+        user = request.user
+        data = {
+            'code': 200,
+            'msg': '请求成功'
+        }
+
+        if user and user.id:
+
+            cart = CartModel.objects.filter(pk=cart_id).first()
+            if cart.is_select:
+                cart.is_select = False
+            else:
+                cart.is_select = True
+            cart.save()
+            data['is_select'] = cart.is_select
+        return JsonResponse(data)

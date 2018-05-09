@@ -8,6 +8,7 @@
 {% block EXTJS %}
     {{ block.super }}
     <script type="text/javascript" src="{% static 'app/cart/js/cart.js' %}"></script>
+     <script type="text/javascript" src="{% static 'app/common/common.js' %}"></script>
 {% endblock %}
 
 
@@ -20,7 +21,6 @@
         <div class="full">
 
             <section class="clear">
-
                 <ul>
                     <li>收货人:王帅帅<div><p><span><a href="#">修改&gt;</a></span></p></div></li>
                     <li>电话:8008208820 </li>
@@ -56,27 +56,34 @@
 
                     <ul>
                         <!--购物车信息展示-->
+                        {% for cart in carts %}
                             <li class="menuList" cartid="">
                                 <div class="confirm">
-                                    <span class="is_choose" is_select="">
+                                    <span id="changeselect_{{ cart.id }}" >
+                                        {% if cart.is_select %}
 
-                                            <span>√</span>
+                                            <span onclick="cartchangeselect({{ cart.id }})">√</span>
+                                        {% else %}
 
-                                            <span></span>
+                                            <span onclick="cartchangeselect({{ cart.id }})">x</span>
+
+                                        {% endif %}
 
 
                                     </span>
                                 </div>
                                 <a href="#">
-                                    <img src="" alt="">
-                                    <p></p>
+                                    <img src="{{ cart.goods.productimg}}" alt="">
+                                    <p>{{ cart.goods.productlongname }}</p>
                                 </a>
                                 <section>
-                                    <button class="subShopping">-</button>
-                                    <span></span>
-                                    <button class="addShopping">+</button>
+                                    {% csrf_token %}
+                                    <button onclick="subShop({{ cart.goods.id }})" >-</button>
+                                    <span id="num_{{ cart.goods.id }}">{{cart.c_num }}</span>
+                                    <button onclick="addShop({{ cart.goods.id }})">+</button>
                                 </section>
                             </li>
+                        {% endfor %}
                         <!--购物车数据处理结束-->
 
 

@@ -24,7 +24,11 @@ urlpatterns = [
 
     # 添加购物车
     url(r'^addgoods/', views.add_goods, name='addgoods'),
-    url(r'^subgoods', views.sub_goods, name='subgoods'),
+    url(r'^subgoods/', views.sub_goods, name='subgoods'),
+    # 购物车
+    url(r'cart/', views.cart, name='cart'),
+    # 修改购物车商品的选择
+    url(r'^changecartselect/', views.user_change_select, name='change_select'),
 ]
 
 # urlpatterns += router.urls
