@@ -14,6 +14,7 @@ class AuthMiddleware(MiddlewareMixin):
 
         ticket = request.COOKIES.get('ticket')
         if not ticket:
+            # 没有登录，页面不作处理
             # return HttpResponseRedirect('/axf/login')
             return None
         # users = UserModel.objects.filter()

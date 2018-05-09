@@ -1,11 +1,15 @@
 import random
 from datetime import datetime, timedelta
 import time
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from django.core.urlresolvers import reverse
 from django.contrib.auth.hashers import make_password, check_password
 from django.shortcuts import render
-from app.models import MainMustBuy, MainNav, MainShow, MainShop, MainWheel, UserModel, UserTicket
+from rest_framework import viewsets, mixins
+from app.serializers import GoodsSerializer
+
+from app.models import MainMustBuy, MainNav, MainShow, MainShop, MainWheel, UserModel, UserTicket, \
+    FoodType, Goods, CartModel
 
 # Create your views here.
 
@@ -102,8 +106,9 @@ def logout(request):
 def mine(request):
     if request.method == 'GET':
         user = request.user
+        data = {}
 
-        if user.id:
+        if user and user.id:
             orders = user.ordermodel_set.all()
 
             wait_pay, payed = 0, 0
@@ -127,6 +132,129 @@ def cart(request):
         return render(request, 'cart/cart.html')
 
 
-def market(request):
+def user_market(request):
+    # if request.method == 'GET':
+
+        return HttpResponseRedirect(reverse('axf:marketparams', args=('104749', '0', '0')))
+
+
+def market_params(request, typeid, cid, sort_id):
     if request.method == 'GET':
-        return render(request, 'market/market.html')
+        foodtypes = FoodType.objects.all()
+        # 获取商品
+        if cid == '0':
+            goods_types = Goods.objects.filter(categoryid=typeid)
+        else:
+            goods_types = Goods.objects.filter(categoryid=typeid,
+                                               childcid=cid)
+
+    # 商品分类
+        if sort_id == '0':
+            pass
+        elif sort_id == '1':
+            goods_types.order_by('productnum')
+
+        elif sort_id == '2':
+            goods_types = goods_types.order_by('-price')
+        elif sort_id == '3':
+            goods_types = goods_types.order_by('price')
+
+        # 获取分类全部类型
+        foodtypes_childnames = FoodType.objects.filter(typeid=typeid).first()
+        childtypenames = foodtypes_childnames.childtypenames
+        childtypenames_list = childtypenames.split('#')
+
+        child_types_list = []
+
+        for childtypename in childtypenames_list:
+            child_types_list.append(childtypename.split(':'))
+
+        data = {'foodtypes': foodtypes,
+                'cid': cid,
+                'goods_types': goods_types,
+                'child_types_list': child_types_list,
+                'sort_id': sort_id,
+                'typeid': typeid,
+                ' foodtypes_childnames': foodtypes_childnames}
+
+        return render(request, 'market/market.html', data)
+
+
+# def goods(request, typeid):
+#     if request.method == 'GET':
+#         type_id = FoodType.objects.filter(typeid=typeid)
+#         foodtypes = Goods.objects.filter(categoryid=typeid)
+#         foodtype = FoodType.objects.all()
+#
+#         return render(request, 'market/market.html', {'type_id': type_id,
+#                                                       'food_type': foodtype,
+#                                                       'food_types': foodtypes})
+
+
+def wait_payed(request):
+    if request.method == 'GET':
+
+        return render(request, 'order/order_list_wait_pay.html')
+
+
+def wait_get(request):
+    if request.method == 'GET':
+
+        return render(request, 'order/order_list_payed.html')
+
+
+def add_goods(request):
+
+    if request.method == 'POST':
+
+        data = {
+            'msg': '请求成功',
+            'code': '200',
+        }
+        user = request.user
+        if user and user.id:
+            goods_id = request.POST.get('goods_id')
+            # 获取购物车信息
+            user_carts = CartModel.objects.filter(user=user, goods_id=goods_id).first()
+            # 如果用户选了商品
+            if user_carts:
+                user_carts.c_num += 1
+                user_carts.save()
+                data['c_num'] = user_carts.c_num
+            else:
+                # 如果没选商品，新建商品
+                CartModel.objects.create(user=user,
+                                         goods_id=goods_id,
+                                         c_num=1)
+                data['c_num'] = 1
+
+        return JsonResponse(data)
+
+
+def sub_goods(request):
+
+    if request.method == 'POST':
+        data = {
+            'msg': '请求成功',
+            'code': '200',
+        }
+
+        user = request.user
+        goods_id = request.POST.get('goods_id')
+
+        if user and user.id:
+            # 查看当前商品是否在购物车中
+            user_carts = CartModel.objects.filter(user=user,
+                                                  goods_id=goods_id).first()
+            # 如果存在则减 1
+            if user_carts:
+                # 如果商品数量为1，则删除
+                if user_carts.c_num == 1:
+                    user_carts.delete()
+                    data['c_num'] = 0
+                else:
+                    user_carts.c_num -= 1
+                    user_carts.save()
+                    data['c_num'] = user_carts.c_num
+
+        return JsonResponse(data)
