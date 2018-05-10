@@ -23,8 +23,8 @@ from app import views
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^axf/', include('app.urls', namespace='axf')),
-    url(r'^static/(?P<path>.*)$', serve, {"docunment_root": settings.STATIC_ROOT}),
-    url(r'^$', views.home)
+    # url(r'^static/(?P<path>.*)$', serve, {"docunment_root": settings.STATIC_ROOT}),
+    # url(r'^$', views.home)
 
 ]
 

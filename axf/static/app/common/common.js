@@ -11,6 +11,8 @@ function addShop(goods_id) {
         success: function (msg) {
 
             $('#num_' + goods_id).html(msg.c_num)
+            $('#price_total').html('总价：' + msg.price_total)
+
         },
         error:function (msg) {
             alert('请求错误')
@@ -31,6 +33,7 @@ function subShop(goods_id) {
         success: function (msg) {
 
             $('#num_' + goods_id).html(msg.c_num)
+            $('#price_total').html('总价：' + msg.price_total)
         },
         error:function (msg) {
             alert('请求错误')

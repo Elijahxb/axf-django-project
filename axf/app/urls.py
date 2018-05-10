@@ -34,7 +34,7 @@ urlpatterns = [
     url(r'^orderpayed/(\d+)/', views.order_pay, name='order_pay'),
     url(r'^orderwaitpay/', views.order_wait_pay, name='order_wait_pay'),
     # 待收货
-    url(r'orderpay/', views.order_wait_shouhuo, name='order_wait_shouhuo')
+    url(r'orderpay/', views.order_wait_shouhuo, name='order_wait_shouhuo'),
 ]
 
 # urlpatterns += router.urls

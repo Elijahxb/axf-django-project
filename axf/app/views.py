@@ -221,13 +221,14 @@ def add_goods(request):
                 user_carts.c_num += 1
                 user_carts.save()
                 data['c_num'] = user_carts.c_num
+
             else:
                 # 如果没选商品，新建商品
                 CartModel.objects.create(user=user,
                                          goods_id=goods_id,
                                          c_num=1)
                 data['c_num'] = 1
-
+        data['price_total'] = price_total(user)
         return JsonResponse(data)
 
 
@@ -256,6 +257,7 @@ def sub_goods(request):
                     user_carts.c_num -= 1
                     user_carts.save()
                     data['c_num'] = user_carts.c_num
+            data['price_total'] = price_total(user)
 
         return JsonResponse(data)
 
@@ -267,7 +269,8 @@ def cart(request):
             # 如果用户已经登录，则加载购物车的数据
             carts = CartModel.objects.filter(user=user)
 
-            return render(request, 'cart/cart.html', {'carts': carts})
+            return render(request, 'cart/cart.html', {'carts': carts,
+                                                      'price_total': price_total(user)})
 
         else:
             return HttpResponseRedirect(reverse('axf:login'))
@@ -291,6 +294,7 @@ def user_change_select(request):
                 cart.is_select = True
             cart.save()
             data['is_select'] = cart.is_select
+
         return JsonResponse(data)
 
 
@@ -354,3 +358,14 @@ def order_wait_shouhuo(request):
             orders = OrderModel.objects.filter(user=user, o_status=1)
 
             return render(request, 'order/order_list_payed.html', {'orders': orders})
+
+
+def price_total(user):
+        counts = 0
+        if user and user.id:
+            carts_goods = CartModel.objects.filter(user=user, is_select=True)
+            for carts in carts_goods:
+                counts += carts.c_num * carts.goods.price
+                counts = round(counts, 2)
+
+        return counts
