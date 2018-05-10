@@ -17,10 +17,14 @@ from django.conf.urls import url, include
 from django.contrib import admin
 from axf import settings
 from django.conf.urls.static import static
+from django.views.static import serve
+from app import views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^axf/', include('app.urls', namespace='axf'))
+    url(r'^axf/', include('app.urls', namespace='axf')),
+    url(r'^static/(?P<path>.*)$', serve, {"docunment_root": settings.STATIC_ROOT}),
+    url(r'^$', views.home)
 
 ]
 

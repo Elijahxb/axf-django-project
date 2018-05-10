@@ -56,28 +56,28 @@
             <div id="nav">
 
                 <ul>
+                    <a href="{% url 'axf:order_wait_pay' %}">
                     <li>
                         <dl>
                             <dt><span id="wait_pay_list" class="glyphicon glyphicon-usd"></span>
                                 <span class="badge">
-                                    <a href="/axf/wait_payed">
-                                        {{ wait_pay }}
-                                    </a>
                                     <!--代付款的数量-->
+                                         {{ wait_pay }}
                                 </span></dt>
                             <dd>待付款</dd>
 
                         </dl>
 
                     </li>
+                    </a>
                     <li>
+                         <a href="{% url 'axf:order_wait_shouhuo' %}">
                         <dl>
                             <dt><span id="order_payed_list" class="glyphicon glyphicon-envelope"></span>
                                 <span class="badge">
-                                    <a href="/axf/wait_get">
+
                                     <!--待收货的数量-->
                                     {{ payed }}
-                                    </a>
                                 </span></dt>
                             <dd>待收货</dd>
                         </dl>

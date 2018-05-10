@@ -9,7 +9,7 @@ from rest_framework import viewsets, mixins
 from app.serializers import GoodsSerializer
 
 from app.models import MainMustBuy, MainNav, MainShow, MainShop, MainWheel, UserModel, UserTicket, \
-    FoodType, Goods, CartModel
+    FoodType, Goods, CartModel, OrderModel, OrderGoodsModel
 
 # Create your views here.
 
@@ -190,17 +190,17 @@ def market_params(request, typeid, cid, sort_id):
 #                                                       'food_type': foodtype,
 #                                                       'food_types': foodtypes})
 
-
-def wait_payed(request):
-    if request.method == 'GET':
-
-        return render(request, 'order/order_list_wait_pay.html')
-
-
-def wait_get(request):
-    if request.method == 'GET':
-
-        return render(request, 'order/order_list_payed.html')
+#
+# def wait_payed(request):
+#     if request.method == 'GET':
+#
+#         return render(request, 'order/order_info.html')
+#
+#
+# def wait_get(request):
+#     if request.method == 'GET':
+#
+#         return render(request, 'order/order_list_payed.html')
 
 
 def add_goods(request):
@@ -292,3 +292,65 @@ def user_change_select(request):
             cart.save()
             data['is_select'] = cart.is_select
         return JsonResponse(data)
+
+
+def generate_order(request):
+    if request.method == 'GET':
+        user = request.user
+        if user and user.id:
+            # 先查询is_select为True 的购物车的数据
+            carts_goods = CartModel.objects.filter(is_select=True)
+            # 创建订单,0 未付款， 1 已付款
+            order = OrderModel.objects.create(user=user, o_status=0)
+            # 创建订单详情
+            for carts in carts_goods:
+
+                OrderGoodsModel.objects.create(goods=carts.goods,
+                                               order=order,
+                                               goods_num=carts.c_num)
+                carts.delete()
+
+            return HttpResponseRedirect(reverse('axf:pay_order', args=(str(order.id), )))
+
+
+def pay_order(request, order_id):
+    if request.method == 'GET':
+
+        orders = OrderModel.objects.filter(pk=order_id).first()
+        data = {
+            'order_id': order_id,
+            'orders': orders,
+        }
+
+        return render(request, 'order/order_info.html', data)
+
+
+def order_pay(request, order_id):
+
+    if request.method == 'GET':
+        OrderModel.objects.filter(pk=order_id).update(o_status=1)
+
+    return HttpResponseRedirect(reverse('axf:mine'))
+
+
+def order_wait_pay(request):
+
+    if request.method == 'GET':
+        user = request.user
+
+        if user and user.id:
+            orders = OrderModel.objects.filter(user=user, o_status=0)
+
+            return render(request, 'order/order_list_wait_pay.html', {'orders': orders})
+
+
+def order_wait_shouhuo(request):
+
+    if request.method == 'GET':
+        user = request.user
+
+        if user and user.id:
+
+            orders = OrderModel.objects.filter(user=user, o_status=1)
+
+            return render(request, 'order/order_list_payed.html', {'orders': orders})

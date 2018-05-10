@@ -8,17 +8,21 @@
 
     <ul>
         <!--订单展示-->
+        {% for order in orders %}
             <li>
                 <a href="#">
-                    <p><!-- 订单id --></p>
-                    <p><!-- 数量 --></p>
+                    <p><!-- 订单id -->订单ID：{{ order.id }}</p>
+                    {% for ordergoods in order.ordergoodsmodel_set.all %}
+                    <p><!-- 数量 -->数量：{{ ordergoods.goods_num  }}</p>
                         <!--展示商品的名称-->
                         <li>
-                            <img src="{{ ordermodel.goods.productimg }}" alt="">
+                            <img src="{{ ordergoodsl.goods.productimg }}" alt="">
                         </li>
                         <!--处理结束-->
+                        {% endfor %}
                 </a>
             </li>
+        {% endfor %}
         <!--订单处理结束-->
 
     </ul>
